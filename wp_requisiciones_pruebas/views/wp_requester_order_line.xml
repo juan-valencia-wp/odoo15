@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <!--TREE VIEW-->
+    <record id="requester_order_line_tree" model="ir.ui.view">
+        <field name="name">purchase.requester.line.tree</field>
+        <field name="model">purchase.requester.line</field>
+        <field name="arch" type="xml">
+            <tree>
+              <field name="purchase_order_id" invisible="1"/>
+              <field name="product_seq"/>
+              <field name="product_id"/>
+              <field name="product_qty"/>
+              <field name="product_udm"/>
+              <field name="product_marca"/>
+              <field name="product_modelo"/>
+              <field name="product_serie" optional="show"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="requester_order_line_form" model="ir.ui.view">
+        <field name="name">purchase.requester.line.form</field>
+        <field name="model">purchase.requester.line</field>
+        <field name="arch" type="xml">
+          <form>
+            <sheet>
+              <group>
+                <group>
+                  <field name="product_seq"/>
+                  <field name="product_id"/>
+                  <field name="product_qty"/>
+                </group>
+                <group>
+                  <field name="product_udm"/>
+                  <field name="product_udm_category_id" invisible="1"/>
+                  <field name="purchase_order_id" invisible="1"/>
+                  <field name="product_marca"/>
+                  <field name="product_modelo"/>
+                  <field name="product_serie"/>
+                </group>
+              </group>
+            </sheet>
+          </form>
+        </field>
+      </record>
+
+</odoo>

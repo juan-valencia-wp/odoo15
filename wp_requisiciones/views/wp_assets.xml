@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="assets_common_requester" name="wp_requisiciones assets" inherit_id="web.assets_qweb">
+        <xpath expr="." position="inside">
+            <link rel="stylesheet" type="text/css" href="/wp_requisiciones/static/src/css/requester.css"/>
+        </xpath>
+    </template>
+    <template id="assets_backend" name="wp_requisiciones_javascript assets" inherit_id="web.assets_backend">
+        <xpath expr="." position="inside">
+            <script type="text/javascript" src="/wp_requisiciones/static/src/js/hello_world.js"></script>
+        </xpath>
+    </template>
+</odoo>

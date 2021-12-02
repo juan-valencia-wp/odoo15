@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<!--             button a create tree view-->
+      <record id="purchase_tree" model="ir.ui.view">
+          <field name="name">purchase.requester.tree.view</field>
+          <field name="model">purchase.requester</field>
+          <field name="arch" type="xml">
+            <tree>
+              <field name="name_seq" readonly="1" decoration-bf="1"/>
+              <field name="jefe_disciplina" options="{'no_create_edit': True}"/>
+              <field name="user_id" options="{'no_create_edit': True}"/>
+              <field name="description"/>
+              <field name="date_order"/>
+              <field name="limit_date_order"/>
+              <field name="state" widget="badge" decoration-bf="1" decoration-success="state == 'acc'" decoration-warning="state == 'con'" decoration-danger="state == 'rej'" decoration-info="state == 'done'"/>
+            </tree>
+          </field>
+      </record>
+
+        <record id="purchase_form" model="ir.ui.view">
+            <field name="name">purchase.requester.form</field>
+            <field name="model">purchase.requester</field>
+            <field name="arch" type="xml">
+                <form>
+                    <header>
+                        <button name="action_purchase" string="Mandar a Aprobación" type="object" states="draft" class="oe_highlight"  groups="wp_requisiciones_pruebas.purchase_request_group_dis,wp_requisiciones_pruebas.purchase_request_group_proy,wp_requisiciones_pruebas.purchase_request_group"/>
+                        <button name="button_create" string="Crear una SdP" attrs="{'invisible':['|',('state','in',['draft','con','rej','toapprove','app','reject','done',]), ('muestra_prov_can','==', True)]}" type="object" groups="wp_requisiciones_pruebas.purchase_request_group_dis,wp_requisiciones_pruebas.purchase_request_group_proy,purchase.group_purchase_user"  class="oe_highlight" />
+                        <button name="button_creates" string="Crear una OdC por Proveedor" attrs="{'invisible':['|',('state','in',['draft','con','rej','toapprove','app','reject',]), ('muestra_prov_can','==', False)]}" type="object" groups="wp_requisiciones_pruebas.purchase_request_group_dis,wp_requisiciones_pruebas.purchase_request_group_proy,purchase.group_purchase_user"  class="oe_highlight" confirm="Se crearán Órdenes de Compra según la elección de provedores en las partidas. Las partidas sin un proveedor asignado se perderán. ¿Desea continuar?"/>
+                        <button name="button_cancel" string="Cancelar" states="acc" type="object"  groups = "wp_requisiciones_pruebas.purchase_request_group_dis,wp_requisiciones_pruebas.purchase_request_group_proy" />
+                        <button name="button_convert" string="Convertir a Borrador" attrs="{'invisible':[('state', 'not in', ('rej'))]}" type="object"  groups = "wp_requisiciones_pruebas.purchase_request_group_dis,wp_requisiciones_pruebas.purchase_request_group_proy"  class="oe_highlight" />
+                        <button name="button_approve_dis" string="Aprobación de Disciplina" type="object"  groups = "wp_requisiciones_pruebas.purchase_request_group_dis"  class="oe_highlight" attrs="{'invisible':['|',('req_aprobada_dis', '=', True), ('state','not in', 'con')]}" />
+                        <button name="button_approve_proy" string="Aprobación de Proyecto" type="object"  groups = "wp_requisiciones_pruebas.purchase_request_group_proy"  class="oe_highlight" attrs="{'invisible':['|',('req_aprobada_proy', '=', True), ('state','not in', 'con')]}" />
+                        <button name="action_reject"  string="Rechazar" states="con"  type="object"  groups="wp_requisiciones_pruebas.purchase_request_group_dis,wp_requisiciones_pruebas.purchase_request_group_proy" />
+                        <field name="state" widget="statusbar" statusbar_visible="draft,con,acc,done,rej"/>
+                        <!--button name="action_com_prov" string="Comparar Proveedores" type="object" attrs="{'invisible': [('muestra_prov_com','==', False)]}"/-->
+                        <button name="action_can_prov" string="Cancelar Comparación" type="object" attrs="{'invisible': [('muestra_prov_can','==', False)]}" groups="wp_requisiciones_pruebas.purchase_request_group_dis,wp_requisiciones_pruebas.purchase_request_group_proy,purchase.group_purchase_user" />
+                        <button name="button_done" string="Hecho" attrs="{'invisible':['|',('state','in',['draft','con','rej','toapprove','app','reject','done']), ('order_count_odc','=',0)]}" type="object" groups="wp_requisiciones.purchase_request_group_dis,wp_requisiciones.purchase_request_group_proy,purchase.group_purchase_user"  class="oe_highlight" confirm="La Requisición se marcará como Hecha, quedará bloqueada y no podrán realizar mas movimientos. ¿Desea continuar?"/>
+                        <!-- confirm="Are you sure you want to do this?" -->
+                   </header>
+                   <sheet>
+                     <field name="req_aprobada_dis" invisible="1"/>
+                     <field name="req_aprobada_proy" invisible="1"/>
+                     <div class="oe_button_box" name="button_box">
+                       <button name="action_purchase_requisition_list_pass" type="object" class="oe_stat_button" icon="fa-list-alt" attrs="{'invisible': ['|',('state', 'not in', ['acc','done']),('order_count_sdp','!=',0)]}">
+                         <field name="order_count_s_sdp" widget="statinfo" string="SdP's/OdC"/>
+                       </button>
+                         <button name="%(action_purchase_requisition_list_odc)d" type="action" class="oe_stat_button" icon="fa-list-alt" attrs="{'invisible': ['|',('state', 'not in', ['acc','done']),('order_count_odc','=',0)]}">
+                           <field name="order_count_odc" invisible="1"/>
+                           <field name="order_count_s_odc" widget="statinfo" string="OdC's"/>
+                         </button>
+                         <button name="%(action_purchase_requisition_list_sdp)d" type="action" class="oe_stat_button" icon="fa-list-alt" attrs="{'invisible': ['|',('state', 'not in', ['acc','done']),('order_count_sdp','=',0)]}">
+                           <field name="order_count_sdp" invisible="1"/>
+                           <field name="order_count_s_sdp" widget="statinfo" string="SdP's"/>
+                         </button>
+                     </div>
+                     <div class="oe_title">
+                            <span class="o_form_label" attrs="{'invisible': [('state','not in',('draft','sent'))]}">Requisición de Compra </span>
+                            <h1>
+                              <field name="name_seq" readonly="1"/>
+                            </h1>
+                        </div>
+                        <group>
+                          <group id="req_izq">
+                              <field name="res_id" class="oe_inline" invisible="1"/>
+                              <field name="date_order" class="oe_inline" options="{'no_create_edit': False}" />
+                              <field name="limit_date_order" class="oe_inline" options="{'no_create_edit': False}" />
+                              <field name="proyecto_nombre" class="oe_inline" attrs="{'required': True, 'readonly': [('state','not in', 'draft')]}"/>
+                              <field name="jefe_proyecto" class="oe_inline" options="{'no_create_edit': True}" attrs="{'required': True}"/>
+                          </group>
+                          <group id="req_der">
+                              <field name="area_nombre" class="oe_inline" attrs="{'readonly': [('state','not in', 'draft')]}"/>
+                              <field name="tiporeq_nombre" class="oe_inline" attrs="{'readonly': [('state','not in', 'draft')]}"/>
+                              <field name="disciplina_nombre" class="oe_inline" attrs="{'readonly': [('state','not in', 'draft')]}"/>
+                              <field name="jefe_disciplina" class="oe_inline" options="{'no_create_edit': True}" attrs="{'required': True}"/>
+                          </group>
+                          <h2 class="o_form_label"><strong>Descripción</strong></h2>
+                          <field name="description" placeholder="Describa de que se trata esta requisición..."/>
+                          <br/>
+                          <br/>
+                          <h2 class="o_form_label" attrs="{'invisible': ['|', ('muestra_prov_can','==', False), ('proveedor_uno','==', False)]}" groups="wp_requisiciones_pruebas.purchase_request_group_dis,wp_requisiciones_pruebas.purchase_request_group_proy,purchase.group_purchase_user" >Proveedores Seleccionados</h2>
+                          <group groups="wp_requisiciones_pruebas.purchase_request_group_dis,wp_requisiciones_pruebas.purchase_request_group_proy,purchase.group_purchase_user" >
+                            <field name="muestra_prov_com" invisible="1" />
+                            <field name="muestra_prov_can" invisible="1" />
+                            <field name="proveedor_uno" attrs="{'invisible': ['|', ('muestra_prov_can','==', False), ('proveedor_uno','==', False)]}"/>
+                            <field name="proveedor_dos" attrs="{'invisible': ['|', ('muestra_prov_can','==', False), ('proveedor_dos', '==', False)]}"/>
+                            <field name="proveedor_tres" attrs="{'invisible': ['|', ('muestra_prov_can','==', False), ('proveedor_tres', '==', False)]}"/>
+                          </group>
+                          <group groups="wp_requisiciones_pruebas.purchase_request_group_dis,wp_requisiciones_pruebas.purchase_request_group_proy,purchase.group_purchase_user" >
+                            <field name="aplica_prov_uno" string="Aplicar a todos" attrs="{'invisible': ['|', ('muestra_prov_can','==', False), ('proveedor_uno','==', False)]}"/>
+                            <field name="aplica_prov_dos" string="Aplicar a todos" attrs="{'invisible': ['|', ('muestra_prov_can','==', False), ('proveedor_dos', '==', False)]}"/>
+                            <field name="aplica_prov_tres" string="Aplicar a todos" attrs="{'invisible': ['|', ('muestra_prov_can','==', False), ('proveedor_tres', '==', False)]}"/>
+                          </group>
+                        </group>
+                        <notebook colspan="2">
+                         <page string="Partidas">
+                           <field name="purchase_order_line"
+                             widget="section_and_note_one2many"
+                             mode="tree,kanban">
+                             <!--attrs="{'readonly': [('state','not in', 'draft')]}"-->
+                             <tree string="Partidas" editable="bottom" class="tree_partidas">
+                               <control>
+                                   <create name="add_request_control" string="Agregar partida"/>
+                               </control>
+                               <field name="price_unit" invisible="1"/>
+                               <field name="precio_menor_uno" invisible="1"/>
+                               <field name="precio_menor_dos" invisible="1"/>
+                               <field name="precio_menor_tres" invisible="1"/>
+                               <field name="product_udm_category_id" invisible="1"/>
+                               <field name="product_seq" attrs="{'readonly': [('parent.state','not in', 'draft')]}"/>
+                               <field name="product_id" attrs="{'required': True, 'readonly': [('parent.state','not in', 'draft')]}"/>
+                               <field name="product_qty" attrs="{'required': True, 'readonly': [('parent.state','not in', 'draft')]}"/>
+                               <field name="product_udm" attrs="{'required': True, 'readonly': [('parent.state','not in', 'draft')]}"/>
+                               <field name="product_marca" optional="show"/>
+                               <field name="product_modelo" optional="show"/>
+                               <field name="product_serie" optional="hide"/>
+                               <field name="precio_prov_uno" attrs="{'column_invisible': ['|',('parent.muestra_prov_can','==', False), ('parent.proveedor_uno','==', False)]}"
+                                 decoration-warning="precio_prov_uno == 0.0"
+                                 decoration-info="precio_prov_uno == precio_prov_dos or precio_prov_uno == precio_prov_tres"
+                                 decoration-success="precio_menor_uno == True"
+                                 decoration-bf="precio_menor_uno == True"
+                                 groups="wp_requisiciones_pruebas.purchase_request_group_dis,wp_requisiciones_pruebas.purchase_request_group_proy,purchase.group_purchase_user" />
+                               <field name="precio_prov_dos" attrs="{'column_invisible': ['|',('parent.muestra_prov_can','==', False), ('parent.proveedor_dos','==', False)]}"
+                                 decoration-warning="precio_prov_dos == 0.0"
+                                 decoration-info="precio_prov_dos == precio_prov_uno or precio_prov_dos == precio_prov_tres"
+                                 decoration-success="precio_menor_dos == True"
+                                 decoration-bf="precio_menor_dos == True"
+                                 groups="wp_requisiciones_pruebas.purchase_request_group_dis,wp_requisiciones_pruebas.purchase_request_group_proy,purchase.group_purchase_user" />
+                               <field name="precio_prov_tres" attrs="{'column_invisible': ['|',('parent.muestra_prov_can','==', False), ('parent.proveedor_tres','==', False)]}"
+                                 decoration-warning="precio_prov_tres == 0.0"
+                                 decoration-info="precio_prov_tres == precio_prov_uno or precio_prov_tres == precio_prov_dos"
+                                 decoration-success="precio_menor_tres == True"
+                                 decoration-bf="precio_menor_tres == True"
+                                 groups="wp_requisiciones_pruebas.purchase_request_group_dis,wp_requisiciones_pruebas.purchase_request_group_proy,purchase.group_purchase_user" />
+                                 <field name="prov_sel" options="{'no_create_edit': True, 'no_create': True}" domain="[('id', '=', (parent.proveedor_uno, parent.proveedor_dos, parent.proveedor_tres))]" attrs="{'column_invisible': [('parent.muestra_prov_can','==', False)]}"
+                                   groups="wp_requisiciones_pruebas.purchase_request_group_dis,wp_requisiciones_pruebas.purchase_request_group_proy,purchase.group_purchase_user" />
+                              </tree>
+                           </field>
+                            <group name="traer_order_line">
+                              <field name="partner_id" class="oe_inline" invisible="1"/>
+                              <field name="company_id" class="oe_inline" invisible="1"/>
+                                <field name="user_id" class="oe_inline" invisible="1"/>
+                                <field name="purchase_order_id" widget="many2many_tags"  invisible="1"/>
+                            </group>
+                         </page>
+                      </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers" groups = "base.group_user" />
+                        <field name="activity_ids" widget="mail_activity"/>
+                        <field name="message_ids" widget="mail_thread" />
+                    </div>
+                </form>
+            </field>
+        </record>
+
+         <record  id="purchase_kanban_view" model="ir.ui.view">
+           <field name="name">purchase.requester.kanban</field>
+           <field name="model">purchase.requester</field>
+           <field name="arch" type="xml">
+               <kanban class="o_kanban_mobile">
+                   <field name="name_seq" readonly="1" />
+                   <field name="user_id"/>
+                   <field name="description"/>
+                   <field name="date_order" />
+                   <field name="limit_date_order" />
+                   <templates>
+                       <t t-name="kanban-box">
+                           <div t-attf-class="oe_kanban_card oe_kanban_global_click">
+                               <div class="o_kanban_record_top mb16">
+                                   <div class="o_kanban_record_headings mt4">
+                                       <strong class="o_kanban_record_title"><span><t t-esc="record.name_seq.value" decoration-bf="1"/></span></strong>
+                                   </div>
+                                    <strong><field name="user_id" /></strong>
+                               </div>
+                               <div class="o_kanban_record_center">
+                                   <div class="oe_kanban_center_left ">
+                                       <span>Fecha de creación <t t-esc="record.date_order.value and record.date_order.value.split(' ')[0] or False"/></span>
+                                   </div>
+                               </div>
+                               <div class="o_kanban_record_bottom">
+                                   <div class="oe_kanban_bottom_left ">
+                                       <span>Fecha de entrega <t t-esc="record.limit_date_order.value and record.limit_date_order.value.split(' ')[0] or False"/></span>
+                                   </div>
+                                   <div class="oe_kanban_bottom_right" >
+                                       <field name="state" widget="label_selection" options="{'classes': {'draft': 'draft', 'con': 'warning', 'acc': 'success', 'rej': 'danger'}}"/>
+                                   </div>
+                               </div>
+                            </div>
+                        </t>
+                   </templates>
+                </kanban>
+            </field>
+        </record>
+
+        <record id="purchase_requester_view_search" model="ir.ui.view">
+            <field name="name">purchase.requester.select</field>
+            <field name="model">purchase.requester</field>
+            <field name="arch" type="xml">
+                <search string="Search Purchase Requester">
+                    <field name="name_seq" string="Requisición"
+                        filter_domain="[('name_seq', 'ilike', self)]"/>
+                    <field name="jefe_disciplina"/>
+                    <field name="user_id"/>
+                    <filter name="my_Orders" string="Mis Requisiciones" domain="[('user_id', '=', uid)]"/>
+                    <separator/>
+                    <filter name="in_draft" string="Borrador" domain="[('state', '=', 'draft')]"/>
+                    <filter name="unconfirmed" string="Sin Confirmar" domain="[('state', '=', 'con')]"/>
+                    <filter name="confirmed" string="Aceptado" domain="[('state', '=', 'acc')]"/>
+                    <filter name="rejected" string="Rechazado" domain="[('state', '=', 'rej')]"/>
+                    <separator/>
+                    <filter name="order_date" string="Fecha de Solicitud" date="date_order"/>
+                    <filter name="limit_order_date" string="Fecha Límite de Solicitud" date="limit_date_order"/>
+                    <filter invisible="1" string="Late Activities" name="activities_overdue"
+                        domain="[('activity_ids.date_deadline', '&lt;', context_today().strftime('%Y-%m-%d'))]"
+                        help="Show all records which has next action date is before today"/>
+                    <filter invisible="1" string="Today Activities" name="activities_today"
+                        domain="[('activity_ids.date_deadline', '=', context_today().strftime('%Y-%m-%d'))]"/>
+                    <filter invisible="1" string="Future Activities" name="activities_upcoming_all"
+                        domain="[('activity_ids.date_deadline', '&gt;', context_today().strftime('%Y-%m-%d'))]"/>
+                    <group expand="0" string="Group By">
+                      <filter string="Estatus" name="estatus" domain="[]" context="{'group_by': 'state'}"/>
+                      <filter string="Proyecto" name="proy" domain="[]" context="{'group_by': 'proyecto_nombre'}"/>
+                      <filter string="Solicitante" name="representative" domain="[]" context="{'group_by': 'user_id'}"/>
+                      <separator/>
+                      <filter string="Fecha de Solicitud" name="order_date" domain="[]" context="{'group_by': 'date_order'}"/>
+                      <filter string="Fecha Límite de Solicitud" name="order_date" domain="[]" context="{'group_by': 'limit_date_order'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="purchase_request_pivot">
+            <field name="name">purchase.requester.pivot</field>
+            <field name="model">purchase.requester</field>
+            <field name="arch" type="xml">
+                <pivot string="Purchase request" display_quantity="True" sample="1">
+                    <field name="state" type="row"/>
+                </pivot>
+            </field>
+        </record>
+
+        <record id="inherit_warehouse_form" model="ir.ui.view">
+          <field name="name">stock.warehouse.form.view</field>
+          <field name="model">stock.warehouse</field>
+      		<field name="inherit_id" ref="stock.view_warehouse"/>
+      		<field name="priority" eval="50" />
+      		<field name="arch" type="xml">
+			         <xpath expr="//field[@name='code']" position="after">
+				            <field name="almacen_proyecto" optional="show"/>
+                    <field name="almacen_area" optional="show"/>
+			         </xpath>
+		      </field>
+        </record>
+
+        <record id="inherit_warehouse_tree" model="ir.ui.view">
+          <field name="name">stock.warehouse.tree.view</field>
+          <field name="model">stock.warehouse</field>
+      		<field name="inherit_id" ref="stock.view_warehouse_tree"/>
+      		<field name="priority" eval="50" />
+      		<field name="arch" type="xml">
+			         <xpath expr="//field[@name='company_id']" position="after">
+				            <field name="almacen_proyecto" optional="show"/>
+                    <field name="almacen_area" optional="show"/>
+			         </xpath>
+		      </field>
+        </record>
+
+
+<!-- new name adding pr0001 v-->
+        <record id="seq_purchase_requester" model="ir.sequence">
+            <field name="name">Purchase Request</field>
+            <field name="code">purchase.requester</field>
+            <field name="prefix"></field>
+            <field name="padding">4</field>
+            <field name="implementation">standard</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+     <!-- button fields -->
+       <record id="purchase_form_action_inherit" model="ir.actions.act_window">
+            <field name="name">Requisición de Compra</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">purchase.requester</field>
+            <field name="view_mode">tree,kanban,form,pivot,activity</field>
+            <field name="search_view_id" ref="purchase_requester_view_search"/>
+            <field name="help" type="html">
+              <p class="o_view_nocontent_smiling_face">
+                Crear una Requisición de Compra
+              </p>
+            </field>
+        </record>
+
+    <menuitem name="Requisiciones" id="menu_requisiciones" parent="purchase.menu_purchase_root" sequence="4"/>
+    <menuitem id="menu_purchase_form_action" parent="menu_requisiciones" groups="wp_requisiciones_pruebas.purchase_request_group" action="purchase_form_action_inherit"/>
+</odoo>

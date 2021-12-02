@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="purchase_request_group" model="res.groups">
+        <field name="name">Requisitador</field>
+        <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+        <field name="category_id" ref="base.module_category_inventory_purchase"/>
+    </record>
+    <record id="purchase_request_group_proy" model="res.groups">
+        <field name="name">Jefe Proyecto</field>
+        <field name="category_id" ref="base.module_category_inventory_purchase"/>
+        <field name="implied_ids" eval="[(4, ref('purchase.group_purchase_user'))]"/>
+    </record>
+    <record id="purchase_request_group_dis" model="res.groups">
+        <field name="name">Jefe Disciplina</field>
+        <field name="category_id" ref="base.module_category_inventory_purchase"/>
+        <field name="implied_ids" eval="[(4, ref('purchase.group_purchase_user'))]"/>
+    </record>
+    <record id="purchase.menu_purchase_root" model="ir.ui.menu">
+        <field name="groups_id" eval="[(4, ref('wp_requisiciones.purchase_request_group'))]"/>
+    </record>
+    <record id="purchase.menu_purchase_rfq" model="ir.ui.menu">
+        <field name="groups_id" eval="[(4, ref('purchase.group_purchase_user'))]"/>
+    </record>
+    <record id="purchase.menu_purchase_form_action" model="ir.ui.menu">
+        <field name="groups_id" eval="[(4, ref('purchase.group_purchase_user'))]"/>
+    </record>
+    <record id="purchase.menu_purchase_products" model="ir.ui.menu">
+        <field name="groups_id" eval="[(4, ref('wp_requisiciones.purchase_request_group'))]"/>
+    </record>
+    <record id="purchase.menu_procurement_management_supplier_name" model="ir.ui.menu">
+        <field name="groups_id" eval="[(4, ref('purchase.group_purchase_user'))]"/>
+    </record>
+    <record id="purchase.menu_purchase_products" model="ir.ui.menu">
+        <field name="groups_id" eval="[(4, ref('purchase.group_purchase_user'))]"/>
+    </record>
+    <record id="base.group_user" model="res.groups">
+      <field name="implied_ids" eval="[(3, ref('hr.menu_hr_employee'))]"/>
+        <field name="users" eval="[(3, ref('hr.menu_hr_employee'))]"/>
+    </record>
+    <record id="hr.menu_hr_root" model="ir.ui.menu">
+        <field name="groups_id" eval="[(3, ref('base.group_user'))]"/>
+    </record>
+    <record id="hr.menu_hr_employee" model="ir.ui.menu">
+        <field name="groups_id" eval="[(3, ref('base.group_user'))]"/>
+    </record>
+    <record id="purchase_requester_rule" model="ir.rule">
+        <field name="name">Purchase requester rule</field>
+        <field name="model_id" ref="model_purchase_requester"/>
+        <field name="groups" eval="[(4, ref('wp_requisiciones.purchase_request_group'))]"/>
+        <field name="domain_force">[('create_uid','=',user.id)]</field>
+    </record>
+    <record id="purchase_requester_rule_proy" model="ir.rule">
+      <field name="name">Purchase requester rule for proyecto</field>
+      <field name="model_id" ref="model_purchase_requester"/>
+      <field name="groups" eval="[(4, ref('wp_requisiciones.purchase_request_group_proy'))]"/>
+      <field name="domain_force">[('jefe_proyecto','=',user.id)]</field>
+    </record>
+    <record id="purchase_requester_rule_dis" model="ir.rule">
+        <field name="name">Purchase requester rule for disciplina</field>
+        <field name="model_id" ref="model_purchase_requester"/>
+        <field name="groups" eval="[(4, ref('wp_requisiciones.purchase_request_group_dis'))]"/>
+        <field name="domain_force">[('jefe_disciplina','=',user.id)]</field>
+    </record>
+
+    <record id="purchase_request_super_admin_rule" model="ir.rule">
+        <field name="name">Purchase requester rule for super admin</field>
+        <field name="model_id" ref="model_purchase_requester"/>
+        <field name="groups" eval="[(4, ref('base.user_admin')), (4, ref('purchase.group_purchase_user'))]"/>
+    </record>
+    <record id="purchase_request_super_admin_pu" model="ir.rule">
+        <field name="name">Purchase requester rule for super admin</field>
+        <field name="model_id" ref="model_purchase_order"/>
+        <field name="groups" eval="[(4, ref('wp_requisiciones.purchase_request_group'))]"/>
+    </record>
+</odoo>
+

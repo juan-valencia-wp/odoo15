@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <!--TREE VIEW for proyecto-->
+    <record id="wp_proyecto_tree" model="ir.ui.view">
+        <field name="name">purchase.requester.proyecto.tree</field>
+        <field name="model">purchase.requester.proyecto</field>
+        <field name="arch" type="xml">
+            <tree>
+              <field name="proyecto_nombre"/>
+              <field name="proyecto_codigo"/>
+              <field name="proyecto_lider"/>
+              <field name="proyecto_cliente"/>
+              <field name="proyecto_obra"/>
+              <field name="proyecto_no_contrato"/>
+             <field name="proyecto_localizacion"/>
+              <field name="proyecto_fecha_inicio"/>
+            </tree>
+        </field>
+    </record>
+
+      <record id="wp_proyecto_form" model="ir.ui.view">
+          <field name="name">purchase.requester.proyecto.form</field>
+          <field name="model">purchase.requester.proyecto</field>
+          <field name="arch" type="xml">
+            <form>
+              <sheet>
+                <div class="oe_title">
+                       <h1>
+                          Proyecto WP
+                       </h1>
+                   </div>
+                   <group>
+                     <group>
+                        <field name="proyecto_nombre" class="oe_inline" attrs="{'required': True}"/>
+                        <field name="proyecto_codigo" class="oe_inline" attrs="{'required': True}"/>
+                        <field name="proyecto_cliente" class="oe_inline"/>
+                        <field name="proyecto_lider" class="oe_inline"/>
+                        <field name="proyecto_compradores" class="oe_inline" widget="many2many_tags"/>
+                    </group>
+                    <group>
+                      <field name="proyecto_obra" class="oe_inline"/>
+                        <field name="proyecto_fecha_inicio" class="oe_inline"/>
+                        <field name="proyecto_no_contrato" class="oe_inline"/>
+                       <field name="proyecto_localizacion" class="oe_inline"/>
+                   </group>
+                 </group>
+                </sheet>
+              </form>
+          </field>
+      </record>
+
+      <record id="action_wp_proyecto" model="ir.actions.act_window">
+          <field name="name">Proyectos</field>
+          <field name="type">ir.actions.act_window</field>
+          <field name="res_model">purchase.requester.proyecto</field>
+          <field name="view_mode">tree,form</field>
+          <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+              Crear un Proyecto
+            </p>
+          </field>
+      </record>
+      <!-- end proyecto-->
+
+      <menuitem id="wp_proyecto_menu" name="Proyectos" parent="menu_requisiciones" groups="wp_requisiciones.purchase_request_group" action="action_wp_proyecto"/>
+
+</odoo>

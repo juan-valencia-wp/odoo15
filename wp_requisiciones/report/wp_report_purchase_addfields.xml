@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+<template id="report_purchase_document_inherit" inherit_id="purchase.report_purchaseorder_document">
+    <t t-set="o" t-value="o.with_context(lang=o.partner_id.lang)"/>
+    <xpath expr="//div[@id='informations']" position="after">
+      <br/>
+       <div id="informations2" class="row mt32 mb32">
+           <div t-if="o.proyecto_nombre" class="col-3 bm-2">
+               <strong>Proyecto:</strong>
+               <p t-field="o.proyecto_nombre" class="m-0"/>
+           </div>
+           <div t-if="o.area_nombre" class="col-3 bm-2">
+               <strong>Área:</strong>
+               <p t-field="o.area_nombre" class="m-0"/>
+           </div>
+           <div t-if="o.disciplina_nombre" class="col-3 bm-2">
+               <strong>Disciplina:</strong>
+               <p t-field="o.disciplina_nombre" class="m-0"/>
+           </div>
+           <div t-if="o.tiporeq_nombre" class="col-3 bm-2">
+             <strong>Tipo de requisición:</strong>
+             <p t-field="o.tiporeq_nombre" class="m-0"/>
+           </div>
+         </div>
+         <br/>
+        <div id="informations3" class="row mt32 mb32">
+
+       </div>
+       <br/>
+     </xpath>
+     <xpath expr="//td[@id='product']" position="inside">
+          <br/>
+           <span t-field="line.p_marca"/>
+           <span t-field="line.p_modelo"/>
+     </xpath>
+
+</template>
+
+</odoo>

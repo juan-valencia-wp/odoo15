@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+      <!--TREE VIEW for disciplina-->
+        <record id="wp_disciplina_tree" model="ir.ui.view">
+            <field name="name">purchase.requester.disciplina.tree</field>
+            <field name="model">purchase.requester.disciplina</field>
+            <field name="arch" type="xml">
+                <tree>
+                  <field name="disciplina_nombre"/>
+                  <field name="disciplina_codigo"/>
+                  <field name="disciplina_lider"/>
+                  <field name="disciplina_proyecto"/>
+                </tree>
+            </field>
+        </record>
+
+          <record id="wp_disciplina_form" model="ir.ui.view">
+              <field name="name">purchase.requester.disciplina.form</field>
+              <field name="model">purchase.requester.disciplina</field>
+              <field name="arch" type="xml">
+                <form>
+                  <sheet>
+                    <div class="oe_title">
+                           <h1>
+                              Disciplina WP
+                           </h1>
+                       </div>
+                       <group>
+                         <group>
+                            <field name="disciplina_nombre" class="oe_inline"/>
+                            <field name="disciplina_codigo" class="oe_inline"/>
+                        </group>
+                        <group>
+                            <field name="disciplina_lider" class="oe_inline"/>
+                           <field name="disciplina_proyecto" class="oe_inline"/>
+                       </group>
+                     </group>
+                    </sheet>
+                  </form>
+              </field>
+          </record>
+
+          <record id="action_wp_disciplina" model="ir.actions.act_window">
+              <field name="name">Disciplinas</field>
+              <field name="type">ir.actions.act_window</field>
+              <field name="res_model">purchase.requester.disciplina</field>
+              <field name="view_mode">tree,form</field>
+              <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                  Crear un Disciplina
+                </p>
+              </field>
+          </record>
+          <!-- end disciplina-->
+
+      <menuitem id="wp_disciplina_menu" name="Disciplinas" parent="menu_requisiciones" groups="wp_requisiciones.purchase_request_group" action="action_wp_disciplina"/>
+
+</odoo>
